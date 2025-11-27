@@ -1,9 +1,190 @@
-import React from 'react'
+'use client'
+import Card from "@/components/Card";
+import Image from "next/image";
+import { motion } from "framer-motion";
 
-const page = () => {
+export default function Home() {
+  const products = [
+    {
+      id: 1,
+      title: "Nike Air Max Pulse",
+      category: "Women's Shoes",
+      price: 13995,
+      image: "/shoes/shoe-1.jpg",
+      label: "Just In",
+      colors: "2 Colours"
+    },
+    {
+      id: 2,
+      title: "Nike Air Max 97 SE",
+      category: "Men's Shoes",
+      price: 16995,
+      image: "/shoes/shoe-2.webp",
+      label: "Promo",
+      colors: "1 Colour"
+    },
+    {
+      id: 3,
+      title: "Nike Air Max SYSTM",
+      category: "Women's Shoes",
+      price: 8595,
+      image: "/shoes/shoe-3.webp",
+      label: "Just In",
+      colors: "1 Colour"
+    },
+    {
+      id: 4,
+      title: "Nike Air Max Pulse",
+      category: "Men's Shoes",
+      price: 13995,
+      image: "/shoes/shoe-4.webp",
+      colors: "2 Colours"
+    },
+    {
+      id: 5,
+      title: "Nike Dunk Low Retro",
+      category: "Men's Shoes",
+      price: 8695,
+      image: "/shoes/shoe-5.avif",
+      label: "Best Seller",
+      colors: "3 Colours"
+    },
+    {
+      id: 6,
+      title: "Nike Air Force 1 '07",
+      category: "Women's Shoes",
+      price: 9695,
+      image: "/shoes/shoe-6.avif",
+      colors: "2 Colours"
+    },
+    {
+      id: 7,
+      title: "Nike Air Max SC",
+      category: "Men's Shoes",
+      price: 5995,
+      image: "/shoes/shoe-7.avif",
+      colors: "4 Colours"
+    },
+    {
+      id: 8,
+      title: "Nike Air Max 90",
+      category: "Women's Shoes",
+      price: 11895,
+      image: "/shoes/shoe-8.avif",
+      label: "Sustainable Materials",
+      colors: "1 Colour"
+    },
+    {
+      id: 9,
+      title: "Nike Pegasus 40",
+      category: "Men's Road Running Shoes",
+      price: 11895,
+      image: "/shoes/shoe-9.avif",
+      colors: "5 Colours"
+    }
+  ];
+
   return (
-    <div className='text-heading-1 font-jost'>HomePage</div>
-  )
-}
+    <main className="font-jost pb-24">
+      {/* Hero Section */}
+      <div className="relative w-full min-h-[600px] md:h-[800px] mb-12 bg-light-100 overflow-hidden flex justify-center">
+        <div className="w-full max-w-[1440px] px-6 md:px-12 flex flex-col-reverse md:flex-row items-center justify-between py-12 md:py-0 relative z-10">
 
-export default page
+          {/* Text Content (Left on Desktop, Bottom on Mobile) */}
+          <div className="w-full md:w-1/2 flex flex-col items-start justify-center mt-8 md:mt-0">
+            <motion.p
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              className="text-dark-900 font-semibold mb-4 tracking-widest uppercase text-sm md:text-base"
+            >
+              First Look
+            </motion.p>
+            <motion.h1
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.7, duration: 0.8 }}
+              className="text-5xl md:text-7xl lg:text-8xl font-black text-dark-900 uppercase mb-6 tracking-tighter leading-none text-left"
+            >
+              Nike Air Max<br />Pulse
+            </motion.h1>
+            <motion.p
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.9, duration: 0.8 }}
+              className="text-dark-900 max-w-xl mb-10 text-lg md:text-xl font-medium leading-relaxed text-left"
+            >
+              Extreme comfort. Hyper durable. Max volume. Introducing the Air Max Pulse
+              —designed to push you past your limits and help you go to the max.
+            </motion.p>
+            <motion.div
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1.1, duration: 0.8 }}
+              className="flex gap-4"
+            >
+              <button className="bg-dark-900 text-white px-8 py-3 rounded-full font-bold hover:bg-dark-900/80 transition-all hover:scale-105 active:scale-95 shadow-lg">
+                Buy Now
+              </button>
+              <button className="bg-white text-dark-900 border-2 border-dark-900 px-8 py-3 rounded-full font-bold hover:bg-light-100 transition-all hover:scale-105 active:scale-95 shadow-lg">
+                Add to Cart
+              </button>
+            </motion.div>
+          </div>
+
+          {/* Image Content (Right on Desktop, Top on Mobile) */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1.2 }}
+            className="w-full md:w-1/2 h-[300px] md:h-[600px] relative flex items-center justify-center"
+          >
+            <Image
+              src="/hero-shoe.png"
+              alt="Nike Air Max"
+              fill
+              className="object-contain object-center scale-110 md:scale-125 hover:scale-135 transition-transform duration-700"
+              priority
+            />
+          </motion.div>
+        </div>
+
+        {/* Background Gradient Overlay (Optional) */}
+        <div className="absolute inset-0 bg-gradient-to-r from-light-100 via-transparent to-transparent pointer-events-none" />
+      </div>
+
+      {/* Product Grid */}
+      <div className="mx-auto max-w-[1440px] px-6 md:px-12">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-medium text-dark-900">Best of Air Max</h2>
+          <div className="flex gap-2">
+            <button className="p-3 bg-light-200 rounded-full hover:bg-light-300 disabled:opacity-50">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18L9 12L15 6" stroke="#111111" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <button className="p-3 bg-light-200 rounded-full hover:bg-light-300">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 18L15 12L9 6" stroke="#111111" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {products.map((product) => (
+            <Card
+              key={product.id}
+              image={product.image}
+              title={product.title}
+              category={product.category}
+              price={product.price}
+              label={product.label}
+              colors={product.colors}
+            />
+          ))}
+        </div>
+      </div>
+    </main>
+  );
+}
