@@ -104,7 +104,7 @@ export default function Footer() {
                     <div className="flex items-center gap-2">
                         <Image src="/globe.svg" alt="Location" width={14} height={14} className="invert opacity-50" />
                         <span className="text-white">India</span>
-                        <span className="ml-4">© 2023 Nike, Inc. All Rights Reserved</span>
+                        <span className="ml-4">© 2026 Nike, Inc. All Rights Reserved</span>
                     </div>
                     <div className="flex flex-wrap gap-6">
                         <Link href="#" className="hover:text-white">Guides</Link>
