@@ -27,9 +27,7 @@ export default function RootLayout({
       <body
         className={`${jost.className} antialiased`}
       >
-        <Navbar />
         {children}
-        <Footer />
       </body>
     </html>
   );
