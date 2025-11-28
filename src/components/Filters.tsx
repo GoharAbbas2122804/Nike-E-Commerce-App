@@ -6,6 +6,17 @@ import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils/query";
 
 const filters = [
     {
+        id: "category",
+        name: "Category",
+        options: [
+            { value: "lifestyle", label: "Lifestyle" },
+            { value: "running", label: "Running" },
+            { value: "training", label: "Training & Gym" },
+            { value: "basketball", label: "Basketball" },
+            { value: "football", label: "Football" },
+        ],
+    },
+    {
         id: "gender",
         name: "Gender",
         options: [
@@ -20,6 +31,35 @@ const filters = [
         options: [
             { value: "boys", label: "Boys" },
             { value: "girls", label: "Girls" },
+        ],
+    },
+    {
+        id: "color",
+        name: "Colour",
+        options: [
+            { value: "black", label: "Black" },
+            { value: "white", label: "White" },
+            { value: "blue", label: "Blue" },
+            { value: "red", label: "Red" },
+            { value: "green", label: "Green" },
+            { value: "grey", label: "Grey" },
+            { value: "pink", label: "Pink" },
+            { value: "multi-color", label: "Multi-Colour" },
+        ],
+    },
+    {
+        id: "size",
+        name: "Size",
+        options: [
+            { value: "uk-6", label: "UK 6" },
+            { value: "uk-6.5", label: "UK 6.5" },
+            { value: "uk-7", label: "UK 7" },
+            { value: "uk-7.5", label: "UK 7.5" },
+            { value: "uk-8", label: "UK 8" },
+            { value: "uk-8.5", label: "UK 8.5" },
+            { value: "uk-9", label: "UK 9" },
+            { value: "uk-10", label: "UK 10" },
+            { value: "uk-11", label: "UK 11" },
         ],
     },
     {
@@ -71,8 +111,15 @@ export default function Filters() {
 
     return (
         <>
-            {/* Mobile Filter Button */}
-            <div className="lg:hidden flex justify-end mb-4">
+            {/* Mobile Filter Button - Positioned absolutely in the header area via page layout, 
+          but here we provide the trigger. Actually, the user asked for top-left. 
+          We'll render it here but it might need to be placed in the page layout to be "top-left" 
+          relative to the grid. 
+          However, to keep it self-contained, let's render it here and use portal or just CSS positioning.
+          Better yet, let's expose the open state or button.
+          For now, let's keep the button here but style it to be visible on mobile.
+      */}
+            <div className="lg:hidden mb-4">
                 <button
                     onClick={() => setIsMobileMenuOpen(true)}
                     className="text-dark-900 font-medium flex items-center gap-2"

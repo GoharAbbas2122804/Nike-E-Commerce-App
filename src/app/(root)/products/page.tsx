@@ -17,10 +17,17 @@ export default async function ProductsPage({
     searchParams: Promise<SearchParams>;
 }) {
     const params = await searchParams;
-    const { gender, kids, price, sort } = params;
+    const { gender, kids, price, sort, category, color, size } = params;
 
     // Filter Logic
     let filteredProducts = [...mockProducts];
+
+    if (category) {
+        const categories = category.split(",");
+        filteredProducts = filteredProducts.filter((product) =>
+            categories.includes(product.category)
+        );
+    }
 
     if (gender) {
         const genders = gender.split(",");
@@ -30,16 +37,23 @@ export default async function ProductsPage({
     }
 
     if (kids) {
-        // Assuming kids products might have a 'kids' gender or specific category logic
-        // For now, let's assume 'kids' gender in mock data if we had it, 
-        // or we can filter by category if needed. 
-        // Given the mock data structure, let's filter by gender 'boys' or 'girls' if they existed
-        // But mock data only has men/women. Let's just filter by gender for now.
-        // If we add kids to mock data, we'd filter here.
-        // For this demo, I'll check if gender matches 'boys' or 'girls'
         const kidGenders = kids.split(",");
         filteredProducts = filteredProducts.filter((product) =>
             kidGenders.includes(product.gender)
+        );
+    }
+
+    if (color) {
+        const colors = color.split(",");
+        filteredProducts = filteredProducts.filter((product) =>
+            colors.includes(product.color)
+        );
+    }
+
+    if (size) {
+        const sizes = size.split(",");
+        filteredProducts = filteredProducts.filter((product) =>
+            product.size.some((s) => sizes.includes(s))
         );
     }
 
