@@ -106,6 +106,13 @@ async function seed() {
     const nikeBrand = insertedBrands.find(b => b.slug === 'nike') || insertedBrands[0];
     const shoesCategory = insertedCategories.find(c => c.slug === 'shoes') || insertedCategories[0];
 
+    // Local images from /public/shoes
+    const shoeImages = [
+      'shoe-1.jpg', 'shoe-2.webp', 'shoe-3.webp', 'shoe-4.webp', 'shoe-5.avif',
+      'shoe-6.avif', 'shoe-7.avif', 'shoe-8.avif', 'shoe-9.avif', 'shoe-10.avif',
+      'shoe-11.avif', 'shoe-12.avif', 'shoe-13.avif', 'shoe-14.avif', 'shoe-15.avif'
+    ];
+
     for (let i = 0; i < 15; i++) {
       const gender = faker.helpers.arrayElement(insertedGenders);
       const name = `Nike ${faker.commerce.productName()}`;
@@ -122,9 +129,10 @@ async function seed() {
     console.log(`Inserted ${insertedProducts.length} products`);
 
     // Insert Variants and Images
-    for (const product of insertedProducts) {
+    for (const [i, product] of insertedProducts.entries()) {
       const variantsToInsert = [];
       const numVariants = faker.number.int({ min: 2, max: 5 });
+      const imageUrl = `/shoes/${shoeImages[i % shoeImages.length]}`;
 
       for (let j = 0; j < numVariants; j++) {
         const color = faker.helpers.arrayElement(insertedColors);
@@ -150,17 +158,15 @@ async function seed() {
 
       // Images
       for (const variant of insertedVariants) {
-        const numImages = faker.number.int({ min: 1, max: 3 });
-        const imagesToInsert = [];
-        for (let k = 0; k < numImages; k++) {
-          imagesToInsert.push({
+        // Use the specific image for this product
+        const imagesToInsert = [{
             productId: product.id,
             variantId: variant.id,
-            url: faker.image.urlLoremFlickr({ category: 'shoes' }),
-            sortOrder: k,
-            isPrimary: k === 0,
-          });
-        }
+            url: imageUrl,
+            sortOrder: 0,
+            isPrimary: true,
+        }];
+        
         await db.insert(schema.productImages).values(imagesToInsert);
       }
     }

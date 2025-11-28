@@ -1,13 +1,21 @@
 import Card from "@/components/Card";
 import Filters from "@/components/Filters";
 import Sort from "@/components/Sort";
-import { mockProducts } from "@/lib/mock-data";
+import { getAllProducts } from "@/lib/actions/product";
+import { parseFilterParams } from "@/lib/utils/query";
 
 interface SearchParams {
     gender?: string;
     kids?: string;
     price?: string;
     sort?: string;
+    search?: string;
+    category?: string;
+    brand?: string;
+    color?: string;
+    size?: string;
+    page?: string;
+    limit?: string;
     [key: string]: string | string[] | undefined;
 }
 
@@ -17,68 +25,14 @@ export default async function ProductsPage({
     searchParams: Promise<SearchParams>;
 }) {
     const params = await searchParams;
-    const { gender, kids, price, sort } = params;
-
-    // Filter Logic
-    let filteredProducts = [...mockProducts];
-
-    if (gender) {
-        const genders = gender.split(",");
-        filteredProducts = filteredProducts.filter((product) =>
-            genders.includes(product.gender)
-        );
-    }
-
-    if (kids) {
-        // Assuming kids products might have a 'kids' gender or specific category logic
-        // For now, let's assume 'kids' gender in mock data if we had it, 
-        // or we can filter by category if needed. 
-        // Given the mock data structure, let's filter by gender 'boys' or 'girls' if they existed
-        // But mock data only has men/women. Let's just filter by gender for now.
-        // If we add kids to mock data, we'd filter here.
-        // For this demo, I'll check if gender matches 'boys' or 'girls'
-        const kidGenders = kids.split(",");
-        filteredProducts = filteredProducts.filter((product) =>
-            kidGenders.includes(product.gender)
-        );
-    }
-
-    if (price) {
-        const priceRanges = price.split(",");
-        filteredProducts = filteredProducts.filter((product) => {
-            return priceRanges.some((range) => {
-                const [min, max] = range.split("-").map(Number);
-                return product.price >= min && product.price <= max;
-            });
-        });
-    }
-
-    // Sort Logic
-    if (sort) {
-        switch (sort) {
-            case "price-asc":
-                filteredProducts.sort((a, b) => a.price - b.price);
-                break;
-            case "price-desc":
-                filteredProducts.sort((a, b) => b.price - a.price);
-                break;
-            case "newest":
-                // Mock logic for newest - just reverse or random shuffle for demo
-                // In real app, sort by created_at
-                filteredProducts.reverse();
-                break;
-            case "featured":
-            default:
-                // Default order
-                break;
-        }
-    }
+    const filters = parseFilterParams(params);
+    const { data: products, metadata } = await getAllProducts(filters);
 
     return (
         <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-8">
             <div className="flex items-center justify-between mb-6 sticky top-0 bg-white z-10 py-4">
                 <h1 className="text-2xl font-medium text-dark-900">
-                    New ({filteredProducts.length})
+                    New ({metadata.total})
                 </h1>
                 <div className="flex items-center gap-4">
                     <div className="lg:hidden">
@@ -111,17 +65,17 @@ export default async function ProductsPage({
 
                 {/* Product Grid */}
                 <div className="flex-1">
-                    {filteredProducts.length > 0 ? (
+                    {products.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8">
-                            {filteredProducts.map((product) => (
+                            {products.map((product) => (
                                 <Card
                                     key={product.id}
-                                    image={product.image}
+                                    image={product.image || "/placeholder.png"} // Fallback image
                                     title={product.name}
-                                    category={product.category}
-                                    price={product.price}
-                                    label={product.label}
-                                    colors={product.colors}
+                                    category={product.category || "General"}
+                                    price={product.price || 0}
+                                    label={undefined} // Logic for labels like "Just In" can be added later
+                                    colors={`${product.colorCount} Color${product.colorCount !== 1 ? 's' : ''}`}
                                 />
                             ))}
                         </div>
