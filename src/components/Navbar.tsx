@@ -34,12 +34,26 @@ export default function Navbar() {
 
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex items-center gap-8">
-                    {["New & Featured", "Men", "Women", "Kids", "Sale"].map((item, index) => (
-                        <Link key={index} href="#" className="text-dark-900 font-medium hover:opacity-70 relative group">
-                            {item}
-                            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-dark-900 transition-all group-hover:w-full"></span>
-                        </Link>
-                    ))}
+                    <Link href="/products?sort=newest" className="text-dark-900 font-medium hover:opacity-70 relative group">
+                        New & Featured
+                        <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-dark-900 transition-all group-hover:w-full"></span>
+                    </Link>
+                    <Link href="/products?gender=men" className="text-dark-900 font-medium hover:opacity-70 relative group">
+                        Men
+                        <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-dark-900 transition-all group-hover:w-full"></span>
+                    </Link>
+                    <Link href="/products?gender=women" className="text-dark-900 font-medium hover:opacity-70 relative group">
+                        Women
+                        <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-dark-900 transition-all group-hover:w-full"></span>
+                    </Link>
+                    <Link href="/products?kids=boys,girls" className="text-dark-900 font-medium hover:opacity-70 relative group">
+                        Kids
+                        <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-dark-900 transition-all group-hover:w-full"></span>
+                    </Link>
+                    <Link href="/products" className="text-dark-900 font-medium hover:opacity-70 relative group">
+                        Sale
+                        <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-dark-900 transition-all group-hover:w-full"></span>
+                    </Link>
                 </div>
 
                 {/* Action Icons */}
@@ -160,11 +174,21 @@ export default function Navbar() {
                     exit={{ opacity: 0, height: 0 }}
                     className="absolute top-full left-0 w-full bg-white shadow-lg md:hidden flex flex-col p-6 gap-4 z-40 overflow-hidden"
                 >
-                    {["New & Featured", "Men", "Women", "Kids", "Sale"].map((item, index) => (
-                        <Link key={index} href="#" className="text-xl font-medium text-dark-900">
-                            {item}
-                        </Link>
-                    ))}
+                    <Link href="/products?sort=newest" className="text-xl font-medium text-dark-900">
+                        New & Featured
+                    </Link>
+                    <Link href="/products?gender=men" className="text-xl font-medium text-dark-900">
+                        Men
+                    </Link>
+                    <Link href="/products?gender=women" className="text-xl font-medium text-dark-900">
+                        Women
+                    </Link>
+                    <Link href="/products?kids=boys,girls" className="text-xl font-medium text-dark-900">
+                        Kids
+                    </Link>
+                    <Link href="/products" className="text-xl font-medium text-dark-900">
+                        Sale
+                    </Link>
                     <div className="mt-4 pt-4 border-t border-light-300">
                         <p className="text-dark-700 mb-4">Become a Member</p>
                         <p className="text-dark-700 mb-4">Sign In</p>
