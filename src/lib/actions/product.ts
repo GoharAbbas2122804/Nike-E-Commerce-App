@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { products, productVariants, productImages, brands, categories } from "@/lib/db/schema";
-import { and, asc, desc, eq, gte, inArray, like, lte, or, sql } from "drizzle-orm";
+import { products, productVariants, productImages, brands, categories, reviews, user } from "@/lib/db/schema";
+import { and, asc, desc, eq, gte, inArray, like, lte, ne, or, sql } from "drizzle-orm";
 import { ProductFilters, parseSortParam, parsePriceRange } from "@/lib/utils/query";
 import { colors } from "@/lib/db/schema/filters/colors";
 import { sizes } from "@/lib/db/schema/filters/sizes";
@@ -52,7 +52,7 @@ export async function getAllProducts(filters: ProductFilters) {
     }
   }
 
-  // Kids (assuming kids logic is based on gender or category, adapting based on requirement)
+  // Kids
   if (kids) {
      const kidGenders = kids.split(",");
      const genderIds = await db.select({ id: genders.id }).from(genders).where(inArray(genders.slug, kidGenders));
@@ -123,9 +123,7 @@ export async function getAllProducts(filters: ProductFilters) {
     .limit(limit)
     .offset(offset);
 
-  // Total Count (Simplified for performance, ideally separate count query)
-  // For accurate count with complex joins/groups, it's better to run a separate count query
-  // Reusing the where clauses
+  // Total Count
   const countQuery = await db
     .select({ count: sql<number>`count(distinct ${products.id})`.mapWith(Number) })
     .from(products)
@@ -171,5 +169,102 @@ export async function getProduct(id: string) {
     },
   });
 
-  return product;
+  if (!product) return null;
+
+  // Group images by variant ID (or 'default' if null)
+  const imagesByVariant: Record<string, string[]> = {};
+  const defaultImages: string[] = [];
+
+  product.images.forEach((img) => {
+    if (img.variantId) {
+      if (!imagesByVariant[img.variantId]) {
+        imagesByVariant[img.variantId] = [];
+      }
+      imagesByVariant[img.variantId].push(img.url);
+    } else {
+      defaultImages.push(img.url);
+    }
+  });
+
+  // Transform variants to include their specific images + default images as fallback
+  const variants = product.variants.map((v) => ({
+    ...v,
+    images: imagesByVariant[v.id] ? [...imagesByVariant[v.id], ...defaultImages] : defaultImages,
+  }));
+
+  return {
+    ...product,
+    variants,
+    defaultImages,
+  };
+}
+
+export async function getProductReviews(productId: string) {
+  const productReviews = await db.query.reviews.findMany({
+    where: eq(reviews.productId, productId),
+    with: {
+      user: true,
+    },
+    orderBy: desc(reviews.createdAt),
+    limit: 10,
+  });
+
+  return productReviews.map((review) => ({
+    id: review.id,
+    author: review.user.name || "Anonymous",
+    rating: review.rating,
+    title: "", // Schema doesn't have title, using empty string or could be derived
+    content: review.comment || "",
+    createdAt: review.createdAt.toISOString(),
+  }));
+}
+
+export async function getRecommendedProducts(productId: string) {
+  // Get the current product to find its category/brand
+  const currentProduct = await db.query.products.findFirst({
+    where: eq(products.id, productId),
+    columns: {
+      categoryId: true,
+      brandId: true,
+    },
+  });
+
+  if (!currentProduct) return [];
+
+  // Find products with same category OR brand, excluding current product
+  const recommended = await db.query.products.findMany({
+    where: and(
+      ne(products.id, productId),
+      eq(products.isPublished, true),
+      or(
+        eq(products.categoryId, currentProduct.categoryId),
+        eq(products.brandId, currentProduct.brandId)
+      )
+    ),
+    limit: 4,
+    with: {
+      category: true,
+      variants: {
+        columns: {
+          price: true,
+          salePrice: true,
+        },
+      },
+      images: {
+        where: eq(productImages.isPrimary, true),
+        limit: 1,
+      },
+    },
+  });
+
+  return recommended.map((p) => {
+    const minPrice = Math.min(...p.variants.map((v) => Number(v.price)));
+    return {
+      id: p.id,
+      title: p.name,
+      category: p.category.name,
+      price: minPrice,
+      image: p.images[0]?.url || "",
+    };
+  });
 }

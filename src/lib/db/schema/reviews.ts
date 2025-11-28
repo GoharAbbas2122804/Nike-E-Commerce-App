@@ -9,6 +9,7 @@ export const reviews = pgTable('reviews', {
   productId: uuid('product_id').references(() => products.id).notNull(),
   userId: uuid('user_id').references(() => user.id).notNull(),
   rating: integer('rating').notNull(),
+  title: text('title'),
   comment: text('comment'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });

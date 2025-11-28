@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Card from "@/components/Card";
 import Filters from "@/components/Filters";
 import Sort from "@/components/Sort";
@@ -68,15 +69,16 @@ export default async function ProductsPage({
                     {products.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8">
                             {products.map((product) => (
-                                <Card
-                                    key={product.id}
-                                    image={product.image || "/placeholder.png"} // Fallback image
-                                    title={product.name}
-                                    category={product.category || "General"}
-                                    price={product.price || 0}
-                                    label={undefined} // Logic for labels like "Just In" can be added later
-                                    colors={`${product.colorCount} Color${product.colorCount !== 1 ? 's' : ''}`}
-                                />
+                                <Link key={product.id} href={`/products/${product.id}`}>
+                                    <Card
+                                        image={product.image || "/placeholder.png"} // Fallback image
+                                        title={product.name}
+                                        category={product.category || "General"}
+                                        price={product.price || 0}
+                                        label={undefined} // Logic for labels like "Just In" can be added later
+                                        colors={`${product.colorCount} Color${product.colorCount !== 1 ? 's' : ''}`}
+                                    />
+                                </Link>
                             ))}
                         </div>
                     ) : (
