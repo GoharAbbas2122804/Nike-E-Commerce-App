@@ -118,7 +118,7 @@ export async function getCart() {
     return acc + price * item.quantity;
   }, 0);
 
-  return { items: formattedItems, subtotal };
+  return { items: formattedItems, subtotal, cartId };
 }
 
 export async function addCartItem(variantId: string, quantity: number) {

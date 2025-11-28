@@ -11,7 +11,10 @@ export const paymentStatusEnum = pgEnum('payment_status', ['initiated', 'complet
 
 export const orders = pgTable('orders', {
   id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').references(() => user.id).notNull(),
+  userId: uuid('user_id').references(() => user.id),
+  stripeSessionId: text('stripe_session_id').unique(),
+  customerEmail: text('customer_email'),
+  customerName: text('customer_name'),
   status: orderStatusEnum('status').default('pending').notNull(),
   totalAmount: numeric('total_amount', { precision: 10, scale: 2 }).notNull(),
   shippingAddressId: uuid('shipping_address_id').references(() => addresses.id).notNull(),
