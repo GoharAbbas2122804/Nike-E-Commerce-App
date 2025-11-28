@@ -37,7 +37,7 @@ export default function Card({ image, title, category, price, label, colors }: C
                         {title}
                     </h3>
                     <p className="text-[15px] font-medium text-dark-900">
-                        {typeof price === 'number' ? `₹ ${price.toLocaleString('en-IN')}` : price}
+                        {typeof price === 'number' ? `$ ${price.toLocaleString('en-US')}` : price}
                     </p>
                 </div>
                 <p className="text-[15px] text-dark-700">{category}</p>

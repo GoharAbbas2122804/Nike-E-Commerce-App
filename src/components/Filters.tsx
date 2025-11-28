@@ -26,10 +26,10 @@ const filters = [
         id: "price",
         name: "Shop By Price",
         options: [
-            { value: "0-2500", label: "Under ₹ 2,500.00" },
-            { value: "2501-7500", label: "₹ 2,501.00 - ₹ 7,500.00" },
-            { value: "7501-12999", label: "₹ 7,501.00 - ₹ 12,999.00" },
-            { value: "13000-100000", label: "Over ₹ 13,000.00" },
+            { value: "0-50", label: "Under $50.00" },
+            { value: "51-100", label: "$51.00 - $100.00" },
+            { value: "101-150", label: "$101.00 - $150.00" },
+            { value: "151-1000", label: "Over $150.00" },
         ],
     },
 ];
