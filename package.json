@@ -11,13 +11,14 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "tsx src/lib/seed.ts"
+    "db:seed": "tsx src/lib/db/seed.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
     "better-auth": "^1.3.34",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.7",
+    "drizzle-zod": "^0.8.3",
     "framer-motion": "^12.23.24",
     "gsap": "^3.13.0",
     "next": "16.0.1",
@@ -29,6 +30,7 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.1.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/pg": "^8.15.6",

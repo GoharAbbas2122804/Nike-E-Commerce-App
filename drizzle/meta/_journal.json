@@ -8,6 +8,13 @@
       "when": 1764261047067,
       "tag": "0000_classy_swordsman",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1764311451076,
+      "tag": "0001_windy_jimmy_woo",
+      "breakpoints": true
     }
   ]
 }
