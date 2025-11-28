@@ -7,7 +7,7 @@ export const addressTypeEnum = pgEnum('address_type', ['billing', 'shipping']);
 
 export const addresses = pgTable('addresses', {
   id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').references(() => user.id).notNull(),
+  userId: uuid('user_id').references(() => user.id),
   type: addressTypeEnum('type').notNull(),
   line1: text('line1').notNull(),
   line2: text('line2'),

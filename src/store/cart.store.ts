@@ -20,6 +20,7 @@ export interface CartItem {
 interface CartState {
   items: CartItem[];
   subtotal: number;
+  cartId: string | null;
   isLoading: boolean;
   fetchCart: () => Promise<void>;
   addItem: (variantId: string, quantity: number) => Promise<void>;
@@ -31,13 +32,14 @@ interface CartState {
 export const useCartStore = create<CartState>((set, get) => ({
   items: [],
   subtotal: 0,
+  cartId: null,
   isLoading: false,
 
   fetchCart: async () => {
     set({ isLoading: true });
     try {
       const cart = await getCart();
-      set({ items: cart.items, subtotal: cart.subtotal });
+      set({ items: cart.items, subtotal: cart.subtotal, cartId: cart.cartId || null });
     } catch (error) {
       console.error("Failed to fetch cart:", error);
     } finally {

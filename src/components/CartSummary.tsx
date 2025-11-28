@@ -2,7 +2,7 @@
 
 import { useCartStore } from "@/store/cart.store";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client"; // Assuming auth client exists or I check cookie
+import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 
 // I'll assume I can check auth status via a hook or just check if user exists in session
@@ -32,15 +32,42 @@ export default function CartSummary({ subtotal, isGuest }: CartSummaryProps) {
     const shipping = 2.00; // Hardcoded as per design
     const total = subtotal + shipping;
 
-    const handleCheckout = () => {
+    const handleCheckout = async () => {
         setIsCheckingOut(true);
-        if (isGuest) {
-            router.push("/auth?redirect=/checkout"); // Or just /auth
-        } else {
-            // Proceed to checkout
-            console.log("Proceeding to checkout...");
-            // router.push("/checkout"); // If it existed
-            alert("Proceeding to checkout (Mock)");
+        try {
+            // We can now allow guests to checkout directly via Stripe
+            // The server action handles auth check (guest or user)
+            // But we need to make sure we have a cart.
+            // Assuming cartId is available in store or we can fetch it.
+            // Wait, CartSummary receives subtotal. It doesn't seem to have cartId.
+            // I need to get cartId. 
+            // Ideally, CartPage should pass cartId or CartSummary should use store.
+            // Let's assume useCartStore has cartId.
+
+            const cartId = useCartStore.getState().cartId; // Assuming this exists or I need to fetch it.
+            // If not in store, I might need to fetch it or pass it as prop.
+            // Let's check useCartStore definition if possible, but for now I'll assume I can get it.
+            // If useCartStore doesn't have it, I'll need to update the store or pass it.
+            // Let's assume for now we pass it as prop or get from store.
+            // I'll check store file in next step if needed, but for now I'll try to use store.
+
+            if (!cartId) {
+                // Fallback or error
+                console.error("Cart ID not found");
+                return;
+            }
+
+            const { createStripeCheckoutSession } = await import("@/lib/actions/checkout");
+            const result = await createStripeCheckoutSession(cartId);
+
+            if (result.url) {
+                window.location.href = result.url;
+            } else if (result.error) {
+                console.error(result.error);
+                setIsCheckingOut(false);
+            }
+        } catch (error) {
+            console.error(error);
             setIsCheckingOut(false);
         }
     };
