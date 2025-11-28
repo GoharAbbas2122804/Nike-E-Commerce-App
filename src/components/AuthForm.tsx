@@ -1,41 +1,78 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useActionState, useEffect } from 'react';
+import { signIn, signUp } from '@/lib/auth/actions';
+import { useRouter } from 'next/navigation';
 
 interface AuthFormProps {
     type: 'sign-in' | 'sign-up';
 }
 
+interface ActionState {
+    error?: {
+        name?: string[];
+        email?: string[];
+        password?: string[];
+        root?: string[];
+    };
+    success?: boolean;
+}
+
+const initialState: ActionState = {
+    error: {},
+    success: false,
+};
+
 export default function AuthForm({ type }: AuthFormProps) {
     const [showPassword, setShowPassword] = useState(false);
+    const router = useRouter();
+    const [state, action, isPending] = useActionState<ActionState, FormData>(
+        type === 'sign-in' ? signIn as any : signUp as any,
+        initialState
+    );
+
+    useEffect(() => {
+        if (state?.success) {
+            router.push('/');
+        }
+    }, [state?.success, router]);
 
     return (
-        <form className="w-full flex flex-col gap-5">
+        <form action={action} className="w-full flex flex-col gap-5">
             {type === 'sign-up' && (
                 <div className="flex flex-col gap-2">
                     <label className="text-sm font-medium text-dark-900">Full Name</label>
                     <input
+                        name="name"
                         type="text"
                         placeholder="Enter your full name"
                         className="w-full p-3 border border-light-300 rounded-md focus:outline-none focus:border-dark-900 transition-colors text-dark-900 placeholder:text-dark-700/50"
                     />
+                    {state?.error?.name && (
+                        <p className="text-red-500 text-xs">{state.error.name}</p>
+                    )}
                 </div>
             )}
 
             <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium text-dark-900">Email</label>
                 <input
+                    name="email"
                     type="email"
                     placeholder="johndoe@gmail.com"
                     className="w-full p-3 border border-light-300 rounded-md focus:outline-none focus:border-dark-900 transition-colors text-dark-900 placeholder:text-dark-700/50"
                 />
+                {state?.error?.email && (
+                    <p className="text-red-500 text-xs">{state.error.email}</p>
+                )}
             </div>
 
             <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium text-dark-900">Password</label>
                 <div className="relative">
                     <input
+                        name="password"
                         type={showPassword ? "text" : "password"}
                         placeholder="minimum 8 characters"
                         className="w-full p-3 border border-light-300 rounded-md focus:outline-none focus:border-dark-900 transition-colors text-dark-900 placeholder:text-dark-700/50"
@@ -58,10 +95,20 @@ export default function AuthForm({ type }: AuthFormProps) {
                         )}
                     </button>
                 </div>
+                {state?.error?.password && (
+                    <p className="text-red-500 text-xs">{state.error.password}</p>
+                )}
             </div>
 
-            <button className="w-full bg-dark-900 text-white font-medium py-3 rounded-full hover:bg-dark-900/90 transition-all mt-2">
-                {type === 'sign-in' ? 'Sign In' : 'Sign Up'}
+            {state?.error?.root && (
+                <p className="text-red-500 text-sm text-center">{state.error.root}</p>
+            )}
+
+            <button
+                disabled={isPending}
+                className="w-full bg-dark-900 text-white font-medium py-3 rounded-full hover:bg-dark-900/90 transition-all mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+                {isPending ? 'Loading...' : (type === 'sign-in' ? 'Sign In' : 'Sign Up')}
             </button>
 
             <p className="text-xs text-center text-dark-700 mt-4">
