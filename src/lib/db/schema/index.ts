@@ -14,3 +14,4 @@ export * from './orders';
 export * from './coupons';
 export * from './wishlists';
 export * from './collections';
+export * from './guest';
