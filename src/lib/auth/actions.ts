@@ -2,7 +2,7 @@
 
 import { auth } from "../auth";
 import { db } from "../db";
-import { guest } from "../db/schema";
+import { guest, carts, cartItems } from "../db/schema";
 import { headers } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 import { eq } from "drizzle-orm";
@@ -142,8 +142,76 @@ export async function mergeGuestCartWithUserCart() {
     return;
   }
 
-  // Placeholder for merging cart logic
-  console.log("Merging guest cart with user cart for session:", guestSessionData.sessionToken);
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user) {
+    return;
+  }
+
+  // Get guest cart
+  const guestCart = await db.query.carts.findFirst({
+    where: eq(carts.guestId, guestSessionData.sessionToken),
+    with: {
+      items: true,
+    },
+  });
+
+  if (!guestCart || guestCart.items.length === 0) {
+    // Just clean up guest session if no cart or empty
+    const cookieStore = await cookies();
+    cookieStore.delete("guest_session");
+    await db.delete(guest).where(eq(guest.sessionToken, guestSessionData.sessionToken));
+    if (guestCart) {
+        await db.delete(carts).where(eq(carts.id, guestCart.id));
+    }
+    return;
+  }
+
+  // Get or create user cart
+  let userCart = await db.query.carts.findFirst({
+    where: eq(carts.userId, session.user.id),
+    with: {
+      items: true,
+    },
+  });
+
+  let userCartId = userCart?.id;
+  let userCartItems = userCart?.items || [];
+
+  if (!userCart) {
+    const [newCart] = await db.insert(carts).values({ userId: session.user.id }).returning();
+    userCartId = newCart.id;
+    userCartItems = [];
+  }
+
+  // Merge items
+  for (const guestItem of guestCart.items) {
+    const existingUserItem = userCartItems.find(
+      (item) => item.productVariantId === guestItem.productVariantId
+    );
+
+    if (existingUserItem) {
+      // Update quantity
+      await db
+        .update(cartItems)
+        .set({ quantity: existingUserItem.quantity + guestItem.quantity })
+        .where(eq(cartItems.id, existingUserItem.id));
+      
+      // Delete guest item
+      await db.delete(cartItems).where(eq(cartItems.id, guestItem.id));
+    } else {
+      // Move item to user cart
+      await db
+        .update(cartItems)
+        .set({ cartId: userCartId })
+        .where(eq(cartItems.id, guestItem.id));
+    }
+  }
+
+  // Delete guest cart
+  await db.delete(carts).where(eq(carts.id, guestCart.id));
 
   // Remove guest session cookie and DB record
   const cookieStore = await cookies();

@@ -3,9 +3,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useCartStore } from "@/store/cart.store";
+import { useEffect } from "react";
 
 export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { items, fetchCart } = useCartStore();
+
+    useEffect(() => {
+        fetchCart();
+    }, [fetchCart]);
+
+    const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
     return (
         <motion.nav
@@ -110,29 +119,36 @@ export default function Navbar() {
                     </motion.button>
 
                     {/* Bag Icon */}
-                    <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className="p-2 hover:bg-light-200 rounded-full transition-colors"
-                    >
-                        <svg
-                            aria-hidden="true"
-                            className="h-6 w-6 text-dark-900"
-                            fill="none"
-                            height="24"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            viewBox="0 0 24 24"
-                            width="24"
-                            xmlns="http://www.w3.org/2000/svg"
+                    <Link href="/cart">
+                        <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="p-2 hover:bg-light-200 rounded-full transition-colors relative"
                         >
-                            <path
-                                d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
-                    </motion.button>
+                            <svg
+                                aria-hidden="true"
+                                className="h-6 w-6 text-dark-900"
+                                fill="none"
+                                height="24"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                viewBox="0 0 24 24"
+                                width="24"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                            {itemCount > 0 && (
+                                <span className="absolute top-0 right-0 -mt-1 -mr-1 bg-black text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                                    {itemCount}
+                                </span>
+                            )}
+                        </motion.button>
+                    </Link>
 
                     {/* Mobile Menu Button */}
                     <button

@@ -12,6 +12,7 @@ import ReviewsSection from "@/components/ReviewsSection";
 import RelatedProductsSection from "@/components/RelatedProductsSection";
 import { getProduct } from "@/lib/actions/product";
 import { cn } from "@/lib/utils";
+import AddToBagButton from "@/components/AddToBagButton";
 
 export async function generateMetadata({
     params,
@@ -137,9 +138,7 @@ export default async function ProductPage({
 
                         {/* Actions */}
                         <div className="space-y-4 pt-4">
-                            <button className="w-full bg-black text-white border border-black py-4 rounded-md font-bold hover:bg-gray-900 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 ease-in-out">
-                                Add to Bag
-                            </button>
+                            <AddToBagButton />
                             <button className="w-full bg-white text-black border border-black py-4 rounded-md font-bold flex items-center justify-center gap-2 hover:bg-gray-50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 ease-in-out">
                                 <Heart className="w-5 h-5" />
                                 Favorite
